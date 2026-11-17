@@ -124,8 +124,11 @@ class Worker:
                                     self.terminal.interrupt()
                                     if self.active:self.active.cancel()
                                 elif t=='takeover':
-                                    self.takeover=bool(msg.get('enabled'));self.terminal.interrupt()
-                                    if self.active:self.active.cancel()
+                                    enabled=bool(msg.get('enabled'))
+                                    if enabled and not self.takeover:
+                                        self.terminal.interrupt()
+                                        if self.active:self.active.cancel()
+                                    self.takeover=enabled
                                 elif t=='input' and self.takeover:self.terminal.send_keys(msg['data'])
                                 elif t=='resize':
                                     self.terminal.tmux('resize-window','-t','agent','-x',str(max(20,min(240,int(msg['cols'])))),'-y',str(max(5,min(100,int(msg['rows'])))))
