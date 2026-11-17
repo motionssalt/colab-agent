@@ -29,7 +29,9 @@ jobs:
       - name: Prepare workspace
         env:
           GH_TOKEN: ${{ github.token }}
+          HOME: ${{ runner.temp }}/colab-agent-home
         run: |
+          mkdir -p "$HOME"
           gh auth setup-git
           git clone --quiet "https://github.com/$GITHUB_REPOSITORY.git" "$HOME/work"
           cd "$HOME/work"
@@ -50,6 +52,7 @@ jobs:
           AGENT_TUNNEL_URL: ${{ secrets.AGENT_TUNNEL_URL }}
           AGENT_RUNNER_TOKEN: ${{ secrets.AGENT_RUNNER_TOKEN }}
           GH_TOKEN: ${{ github.token }}
+          HOME: ${{ runner.temp }}/colab-agent-home
           PYTHONPATH: ${{ github.workspace }}
           AGENT_OFFLINE_LIMIT: ${{ vars.AGENT_OFFLINE_LIMIT || '600' }}
         run: |
