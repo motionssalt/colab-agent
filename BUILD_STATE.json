@@ -1,0 +1,83 @@
+{
+  "project": "colab-agent",
+  "repo": "motionssalt/colab-agent",
+  "goal": "A free Colab Ollama brain driving a live GitHub Actions tmux terminal from a mobile static control panel.",
+  "status": "in_progress",
+  "current_phase": "F1",
+  "phases": [],
+  "queue": [
+    {
+      "id": "F1",
+      "title": "Scaffold",
+      "status": "in_progress",
+      "notes": ""
+    },
+    {
+      "id": "F2",
+      "title": "Runner",
+      "status": "pending",
+      "notes": ""
+    },
+    {
+      "id": "F3",
+      "title": "Brain",
+      "status": "pending",
+      "notes": ""
+    },
+    {
+      "id": "F4",
+      "title": "End-to-end CI",
+      "status": "pending",
+      "notes": ""
+    },
+    {
+      "id": "F5",
+      "title": "Site",
+      "status": "pending",
+      "notes": ""
+    },
+    {
+      "id": "F6",
+      "title": "Cloudflare Pages",
+      "status": "pending",
+      "notes": ""
+    },
+    {
+      "id": "F7",
+      "title": "Colab bootstrap",
+      "status": "pending",
+      "notes": ""
+    },
+    {
+      "id": "F8",
+      "title": "Hardening and docs",
+      "status": "pending",
+      "notes": ""
+    }
+  ],
+  "completed": [],
+  "next_steps": [
+    "Verify scaffold CI then implement runner"
+  ],
+  "decisions": [
+    "No host front-end: this host does not require one.",
+    "Redact credentials from the archived build prompt.",
+    "Builder token is fine-grained; use verified endpoint permissions rather than assuming classic scopes."
+  ],
+  "known_issues": [
+    "Cloudflare token verification returned HTTP 401 Invalid API Token.",
+    "Real Google Colab/T4 testing unavailable from this environment."
+  ],
+  "deployment": {
+    "urls": [],
+    "release_tag": "",
+    "secrets_expected": [
+      "AGENT_TUNNEL_URL",
+      "AGENT_RUNNER_TOKEN",
+      "CLOUDFLARE_API_TOKEN",
+      "CLOUDFLARE_ACCOUNT_ID"
+    ]
+  },
+  "last_updated": "2026-11-17T16:55:30.841300+00:00",
+  "last_session_note": "Scaffold created; Cloudflare credential rejected."
+}
