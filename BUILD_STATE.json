@@ -3,20 +3,20 @@
   "repo": "motionssalt/colab-agent",
   "goal": "A free Colab Ollama brain driving a live GitHub Actions tmux terminal from a mobile static control panel.",
   "status": "in_progress",
-  "current_phase": "F1",
+  "current_phase": "F2",
   "phases": [],
   "queue": [
     {
       "id": "F1",
       "title": "Scaffold",
-      "status": "in_progress",
-      "notes": ""
+      "status": "done",
+      "notes": "Scaffold pushed; GitHub Actions CI 44131280926 passed; archived prompt redacted."
     },
     {
       "id": "F2",
       "title": "Runner",
-      "status": "pending",
-      "notes": ""
+      "status": "in_progress",
+      "notes": "Worker implemented; four local PTY/tmux tests pass including reconnect and timeout recovery; extending CI."
     },
     {
       "id": "F3",
@@ -55,9 +55,17 @@
       "notes": ""
     }
   ],
-  "completed": [],
+  "completed": [
+    "F1: Scaffold pushed; GitHub Actions CI 44131280926 passed; archived prompt redacted."
+  ],
   "next_steps": [
-    "Verify scaffold CI then implement runner"
+    "F2: Runner",
+    "F3: Brain",
+    "F4: End-to-end CI",
+    "F5: Site",
+    "F6: Cloudflare Pages",
+    "F7: Colab bootstrap",
+    "F8: Hardening and docs"
   ],
   "decisions": [
     "No host front-end: this host does not require one.",
@@ -78,6 +86,6 @@
       "CLOUDFLARE_ACCOUNT_ID"
     ]
   },
-  "last_updated": "2026-11-17T16:55:30.841300+00:00",
-  "last_session_note": "Scaffold created; Cloudflare credential rejected."
+  "last_updated": "2026-11-17T16:56:54.827838+00:00",
+  "last_session_note": "Worker implemented; four local PTY/tmux tests pass including reconnect and timeout recovery; extending CI."
 }

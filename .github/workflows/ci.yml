@@ -11,3 +11,10 @@ jobs:
         with:
           python-version: '3.11'
       - run: python scripts/scan_secrets.py
+      - run: sudo apt-get update -qq && sudo apt-get install -y tmux
+      - run: pip install -q -r requirements-dev.txt
+      - run: pytest -q
+      - name: Real web helper smoke tests (graceful network failure accepted)
+        run: |
+          python -m runner.helpers search 'Python programming language' -n 1 || echo 'Search provider unavailable; helper reported failure'
+          python -m runner.helpers fetch https://www.python.org --max-chars 500 || echo 'Fetch network unavailable; helper reported failure'

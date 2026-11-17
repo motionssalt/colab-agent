@@ -1,0 +1,58 @@
+name: Agent runner
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: colab-agent-runner
+  cancel-in-progress: true
+jobs:
+  terminal:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install runtime
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y tmux
+          pip install -q -r requirements.txt
+          printf '#!/bin/sh\nexec python -m runner.helpers search "$@"\n' > /tmp/search
+          printf '#!/bin/sh\nexec python -m runner.helpers fetch "$@"\n' > /tmp/fetch
+          chmod +x /tmp/search /tmp/fetch
+          sudo mv /tmp/search /tmp/fetch /usr/local/bin/
+      - name: Prepare workspace
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh auth setup-git
+          git clone --quiet "https://github.com/$GITHUB_REPOSITORY.git" "$HOME/work"
+          cd "$HOME/work"
+          git config user.name colab-agent
+          git config user.email colab-agent@users.noreply.github.com
+          if git ls-remote --exit-code --heads origin workspace >/dev/null 2>&1; then
+            git checkout --quiet workspace
+          else
+            git checkout --quiet --orphan workspace
+            git rm -rf --quiet .
+            printf '# Agent workspace\n' > README.md
+            git add README.md
+            git commit --quiet -m 'Initialize agent workspace'
+            git push --quiet -u origin workspace
+          fi
+      - name: Start silent worker
+        env:
+          AGENT_TUNNEL_URL: ${{ secrets.AGENT_TUNNEL_URL }}
+          AGENT_RUNNER_TOKEN: ${{ secrets.AGENT_RUNNER_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
+          PYTHONPATH: ${{ github.workspace }}
+          AGENT_OFFLINE_LIMIT: ${{ vars.AGENT_OFFLINE_LIMIT || '600' }}
+        run: |
+          echo "::add-mask::$AGENT_TUNNEL_URL"
+          echo "::add-mask::$AGENT_RUNNER_TOKEN"
+          python -m runner.worker > /dev/null 2>&1
