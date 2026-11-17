@@ -2,7 +2,7 @@
   "project": "colab-agent",
   "repo": "motionssalt/colab-agent",
   "goal": "A free Colab Ollama brain driving a live GitHub Actions tmux terminal from a mobile static control panel.",
-  "status": "in_progress",
+  "status": "complete",
   "current_phase": "F8",
   "phases": [
     {
@@ -44,14 +44,14 @@
     {
       "id": "F7",
       "name": "Colab bootstrap",
-      "status": "in_progress",
-      "notes": "Notebook and importable bootstrap implemented; nbformat validated. Adding mocked API tests and live encrypted-secret dispatch check."
+      "status": "done",
+      "notes": "16 tests passed in Actions 44134773312; generated notebook validates. Live dispatch 44135450081 succeeded with sealed session secrets, graceful dummy-tunnel exit, and logs checked free of all supplied/session secrets."
     },
     {
       "id": "F8",
       "name": "Hardening and docs",
-      "status": "pending",
-      "notes": ""
+      "status": "done",
+      "notes": "19 tests passed in Actions 44136233704, including CLI silence, output head/tail, token-free shell environment, actual git-backed runner replacement and restored state. Browser, localhost and real tunnel jobs passed in 44136233696. Live redeploy 44136233804 and security headers verified; all committed history scanned free of supplied credentials. Real Colab/T4 is explicitly untested."
     }
   ],
   "queue": [
@@ -100,8 +100,8 @@
     {
       "id": "F8",
       "title": "Hardening and docs",
-      "status": "in_progress",
-      "notes": "Hardening passes 19 local tests, real runner-replacement persistence, localhost E2E and mobile browser. Phone-first docs written; awaiting final Actions and redeploy."
+      "status": "done",
+      "notes": "19 tests passed in Actions 44136233704, including CLI silence, output head/tail, token-free shell environment, actual git-backed runner replacement and restored state. Browser, localhost and real tunnel jobs passed in 44136233696. Live redeploy 44136233804 and security headers verified; all committed history scanned free of supplied credentials. Real Colab/T4 is explicitly untested."
     }
   ],
   "completed": [
@@ -111,10 +111,13 @@
     "F4: GitHub Actions 44133493687 passed localhost AND real cloudflared tunnel E2E. Fixed CI startup Ctrl-C race; verifies real command execution and model results.",
     "F5: GitHub Actions 44133770573 passed mobile Chromium browser, localhost and real tunnel jobs; vendored xterm requires no CDN or build step.",
     "F6: Pages deployment 44134069348 green; https://colab-agent.pages.dev returns HTTP 200. Deploy credentials isolated to deploy-site.yml.",
-    "F7: 16 tests passed in Actions 44134773312; generated notebook validates. Live dispatch 44135450081 succeeded with sealed session secrets, graceful dummy-tunnel exit, and logs checked free of all supplied/session secrets."
+    "F7: 16 tests passed in Actions 44134773312; generated notebook validates. Live dispatch 44135450081 succeeded with sealed session secrets, graceful dummy-tunnel exit, and logs checked free of all supplied/session secrets.",
+    "F8: 19 tests passed in Actions 44136233704, including CLI silence, output head/tail, token-free shell environment, actual git-backed runner replacement and restored state. Browser, localhost and real tunnel jobs passed in 44136233696. Live redeploy 44136233804 and security headers verified; all committed history scanned free of supplied credentials. Real Colab/T4 is explicitly untested."
   ],
   "next_steps": [
-    "F8: Hardening and docs"
+    "Victor: read docs/FIRST_RUN.md and run the notebook on a real Colab T4.",
+    "Confirm the first real-model end-to-end task before adding any skills.",
+    "Rotate builder GitHub/Cloudflare credentials originally supplied in the build prompt."
   ],
   "decisions": [
     "No host front-end: this host does not require one.",
@@ -129,7 +132,9 @@
     "Release is a prerelease pending the first real Colab/T4 confirmation."
   ],
   "known_issues": [
-    "Real Google Colab/T4 testing unavailable from this environment."
+    "No real Google Colab/T4 was available: model GPU memory fit, speed, native model tool-choice quality, and Colab runtime disconnect behavior require the first real user run.",
+    "Free Colab GPU availability, Actions service limits and Cloudflare/search availability are external constraints; heartbeat/pings cannot prevent platform quota or policy disconnections.",
+    "Bounded terminal queues/scrollback may drop old output during sustained network backpressure; reconnect recovers the recent screen, not an unlimited terminal log."
   ],
   "deployment": {
     "urls": [
@@ -143,6 +148,14 @@
       "CLOUDFLARE_ACCOUNT_ID"
     ]
   },
-  "last_updated": "2026-11-17T17:22:05.891545+00:00",
-  "last_session_note": "Hardening passes 19 local tests, real runner-replacement persistence, localhost E2E and mobile browser. Phone-first docs written; awaiting final Actions and redeploy."
+  "last_updated": "2026-11-17T17:23:54.384740+00:00",
+  "last_session_note": "F1\u2013F8 implemented and verified. All final source CI/e2e/browser/tunnel jobs green; live Pages verified; dummy live dispatch 44135450081 passed with clean logs. Release candidate pending first real T4 confirmation.",
+  "verification": {
+    "source_commit": "bb681dbb531bdc484b71b5a3dbfb496cd41ec8da",
+    "ci_run": 44136233704,
+    "e2e_run": 44136233696,
+    "pages_run": 44136233804,
+    "live_dispatch_run": 44135450081,
+    "real_colab_tested": false
+  }
 }
