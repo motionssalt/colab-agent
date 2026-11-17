@@ -97,7 +97,13 @@ async def run(tunnel=False,browser=False):
                         event=json.loads(await ws.recv())
                         if event['type']=='terminal':terminal+=event['data']
                         if event.get('text')=='e2e finished':finished=True
-                assert 'echo hello' in terminal and 'hello' in terminal and 'search python' in terminal
+                # tmux emits cursor-addressed screen diffs, not a plain text log.
+                import pyte
+                screen=pyte.HistoryScreen(120,40,history=2000);stream=pyte.Stream(screen);stream.feed(terminal)
+                rendered='\n'.join(''.join(line[x].data for x in sorted(line)) for line in screen.history.top)+'\n'+'\n'.join(screen.display)
+                # Cursor edits can split strings across raw frames; verify rendered screen too.
+                observed=terminal+'\n'+rendered
+                assert 'hello' in observed and ('search python' in observed or 'search python' in ''.join(rendered.splitlines())), repr(observed[-5000:])
                 assert len(llm.results)>=2
                 print(('Tunnel' if tunnel else 'Localhost')+' E2E passed: terminal commands, outputs to model, finish')
     finally:
