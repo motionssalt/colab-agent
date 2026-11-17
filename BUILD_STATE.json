@@ -127,7 +127,7 @@
     "tmux pipe-pane supplies raw PTY output independently of viewers.",
     "Actions runner HOME is isolated under runner.temp to preserve the required ~/work path.",
     "Default: qwen3:14b; context 16384; thinking off; max 60 steps; bounded extractive summaries.",
-    "Runtime PATs must be classic repo+workflow; builder fine-grained permissions were verified against actual APIs.",
+    "Runtime PATs support any GitHub user PAT: classic (repo+workflow verified via X-OAuth-Scopes) and fine-grained/non-OAuth tokens (X-OAuth-Scopes absent; checked upfront via actions/secrets/public-key with empty-repo auto-seeding and permission-specific error messages).",
     "Git Data API performs conflict-checked, non-force template updates; workspace is never touched.",
     "Release is a prerelease pending the first real Colab/T4 confirmation."
   ],
@@ -148,8 +148,8 @@
       "CLOUDFLARE_ACCOUNT_ID"
     ]
   },
-  "last_updated": "2026-11-17T17:23:54.384740+00:00",
-  "last_session_note": "F1\u2013F8 implemented and verified. All final source CI/e2e/browser/tunnel jobs green; live Pages verified; dummy live dispatch 44135450081 passed with clean logs. Release candidate pending first real T4 confirmation.",
+  "last_updated": "2026-11-17T17:41:26.129376+00:00",
+  "last_session_note": "Updated notebook GitHub PAT handling to support fine-grained PATs, classic PATs, and other GitHub user tokens, added early repo/Secrets access check, empty-repo 409 seeding fallback, and actionable permission error messages.",
   "verification": {
     "source_commit": "bb681dbb531bdc484b71b5a3dbfb496cd41ec8da",
     "ci_run": 44136233704,

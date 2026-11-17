@@ -8,7 +8,7 @@ A free, self-hosted agentic terminal: **Ollama in Google Colab thinks; GitHub Ac
 
 ## Use it
 
-Choose a Colab **T4 GPU**, run notebook setup, and paste a **classic PAT with repo + workflow scopes into its hidden prompt**. Tap the private control-panel link, run the heartbeat cell, and give the agent a task. Setup creates your public repository and runner; everyone uses the same static control panel. No site deployment is needed for other users. When finished, interrupt heartbeat and run **All off**.
+Choose a Colab **T4 GPU**, run notebook setup, and paste a **GitHub PAT** into its hidden prompt (any valid user PAT works: a **classic PAT** with `repo` + `workflow` scopes, or a **fine-grained PAT** with repository **Actions**, **Secrets**, **Contents**, and **Workflows** set to Read and write — plus Account **Administration: Read and write** if auto-creating the repo, or create an empty public `colab-agent` repo first). Tap the private control-panel link, run the heartbeat cell, and give the agent a task. Setup creates your public repository and runner; everyone uses the same static control panel. No site deployment is needed for other users. When finished, interrupt heartbeat and run **All off**.
 
 Defaults: `qwen3:14b`, context 16384, thinking off, 60 steps/task. `qwen2.5-coder:14b`, faster `qwen3:8b` and a model-name override are available. Site and runner use outbound WebSockets through an account-free quick tunnel; no SSE. Browser pings every 45s do not defeat platform limits.
 

@@ -77,10 +77,10 @@ def setup(repo_name='colab-agent',site_url='https://colab-agent.pages.dev',model
     check_gpu()
     if not re.fullmatch(r'[A-Za-z0-9_.-]{1,100}',repo_name):raise SetupError('Use a simple GitHub repository name without slashes.')
     if not model.strip() or model.startswith('-'):raise SetupError('Enter a valid Ollama model name.')
-    gh=GitHub(pat or getpass.getpass('Classic GitHub PAT (repo + workflow scopes): '),repo_name);session=Session(gh)
+    gh=GitHub(pat or getpass.getpass('GitHub PAT (classic or fine-grained): '),repo_name);session=Session(gh)
     try:
         owner=gh.verify();print('GitHub account verified:',owner)
-        print('Preparing public repository (conversation state will be public)…');gh.ensure_repo();gh.cancel_runners()
+        print('Preparing public repository (conversation state will be public)…');gh.ensure_repo();gh.check_access();gh.cancel_runners()
         saved=gh.load_state()
         if saved and resume=='ask':resume=input('Saved conversation found. Resume it? [y/N] ').strip().lower()=='y'
         from brain.server import Hub,create_app

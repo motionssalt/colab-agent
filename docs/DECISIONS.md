@@ -11,7 +11,7 @@
 - tmux owns the PTY; pipe-pane streams its raw bytes to a private FIFO. An initial view-only handshake must not send Ctrl-C before bash is ready.
 - Actions already uses /home/runner/work. Give the agent a separate HOME under runner.temp so its requested ~/work remains an isolated workspace clone.
 - Context/state writes use worker-relative ~/work (never Colab's home expansion), preserve the agent cwd with subshells, and serialize RPC calls.
-- Runtime users need classic repo+workflow PATs. Builder fine-grained permissions were verified directly; live dispatch run 44135450081 passed and its public logs were inspected for all supplied/session credentials.
+- Runtime users may use any GitHub user PAT: classic PATs (`repo` + `workflow` scopes validated via `X-OAuth-Scopes`), fine-grained PATs (`github_pat_...`, where `X-OAuth-Scopes` is absent), or other user-scoped GitHub tokens. Repository access and Secrets permission are checked before downloading Ollama/models, and empty pre-created repositories are auto-seeded before Git Data API writes.
 - Template bootstrap uses in-memory tarballs and Git Data API commits, not PAT-bearing git remotes or credential files; local modifications abort rather than being overwritten. Other accounts do not get deploy-site.yml.
 - Use a scripted model in CI to test the mechanism deterministically; model reasoning quality is not claimed to be proven by those tests.
 - Release is marked a prerelease until Victor confirms a real Colab/T4 session. No skills or visual polish were added.
