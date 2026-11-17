@@ -12,11 +12,13 @@ class Terminal:
         self.cwd=pathlib.Path(cwd).resolve();self.cwd.mkdir(parents=True,exist_ok=True)
         self.name='agent-'+uuid.uuid4().hex[:12];self.on_output=on_output
         self.history='';self.lock=asyncio.Lock();self.decoder=codecs.getincrementaldecoder('utf8')('replace')
-        env=os.environ.copy();env['TERM']='xterm-256color'
+        env={k:v for k,v in os.environ.items() if not k.startswith(('AGENT_','CLOUDFLARE_')) and k not in ('GITHUB_PAT','GITHUB_TOKEN')};env['TERM']='xterm-256color';env['PS1']='agent$ '
         subprocess.run(['tmux','-L',self.name,'new-session','-d','-s','agent','-x','100','-y','30','-c',str(self.cwd),'bash --noprofile --norc'],check=True,env=env,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
-        self.master,slave=pty.openpty()
-        self.proc=subprocess.Popen(['tmux','-L',self.name,'attach','-t','agent'],stdin=slave,stdout=slave,stderr=slave,env=env,start_new_session=True)
-        os.close(slave);os.set_blocking(self.master,False)
+        # Stream the pane PTY directly; detached tmux attach clients may suppress
+        # redraws in CI. pipe-pane preserves every byte independent of viewers.
+        self.fifo=pathlib.Path('/tmp')/(self.name+'.fifo');os.mkfifo(self.fifo,0o600)
+        self.master=os.open(self.fifo,os.O_RDWR|os.O_NONBLOCK)
+        self.tmux('pipe-pane','-O','-t','agent','cat > '+str(self.fifo))
         asyncio.get_running_loop().add_reader(self.master,self._read)
     def _read(self):
         try:data=os.read(self.master,65536)
@@ -67,7 +69,7 @@ class Terminal:
         asyncio.get_running_loop().remove_reader(self.master)
         try:self.tmux('kill-server')
         except Exception:pass
-        self.proc.terminate();os.close(self.master)
+        os.close(self.master);self.fifo.unlink(missing_ok=True)
 
 class Worker:
     def __init__(self,url,token,cwd,offline_limit=600,lifetime=340*60):
