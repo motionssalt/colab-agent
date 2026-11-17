@@ -12,10 +12,11 @@ class Scripted:
         self.step+=1
         if self.step==1:action={'tool':'run','args':{'command':'echo hello','timeout_s':10}}
         elif self.step==2:
-            assert any('hello' in r for r in self.results)
+            assert any('"exit_code": 0' in r and 'hello' in r for r in self.results), 'echo did not execute successfully'
             action={'tool':'run','args':{'command':'search python -n 1','timeout_s':45}}
         else:
             assert len(self.results)>=2
+            assert '"error"' not in self.results[-1] and '"exit_code"' in self.results[-1], 'Search helper did not execute'
             action={'tool':'finish','args':{'summary':'e2e finished'}}
         return {'content':json.dumps(action)}
 async def no_save(state):pass

@@ -3,7 +3,7 @@
   "repo": "motionssalt/colab-agent",
   "goal": "A free Colab Ollama brain driving a live GitHub Actions tmux terminal from a mobile static control panel.",
   "status": "in_progress",
-  "current_phase": "F4",
+  "current_phase": "F5",
   "phases": [],
   "queue": [
     {
@@ -27,14 +27,14 @@
     {
       "id": "F4",
       "title": "End-to-end CI",
-      "status": "in_progress",
-      "notes": "Localhost real WebSocket/tmux end-to-end passes with scripted model and real search helper; Actions localhost and best-effort tunnel jobs added."
+      "status": "done",
+      "notes": "GitHub Actions 44133493687 passed localhost AND real cloudflared tunnel E2E. Fixed CI startup Ctrl-C race; verifies real command execution and model results."
     },
     {
       "id": "F5",
       "title": "Site",
-      "status": "pending",
-      "notes": ""
+      "status": "in_progress",
+      "notes": "Mobile site and protocol built; local Chromium test passes chat, rendered terminal and takeover. Browser CI job added."
     },
     {
       "id": "F6",
@@ -58,10 +58,10 @@
   "completed": [
     "F1: Scaffold pushed; GitHub Actions CI 44131280926 passed; archived prompt redacted.",
     "F2: GitHub Actions CI 44131603213 green. Local real search and fetch succeeded; tmux completion, timeout, cancellation and reconnect tests passed.",
-    "F3: GitHub Actions CI 44131953926 passed 11 tests covering fake-model tasks, repair, repeat guards, inbox, cancellation, bounded context, snapshots and authentication."
+    "F3: GitHub Actions CI 44131953926 passed 11 tests covering fake-model tasks, repair, repeat guards, inbox, cancellation, bounded context, snapshots and authentication.",
+    "F4: GitHub Actions 44133493687 passed localhost AND real cloudflared tunnel E2E. Fixed CI startup Ctrl-C race; verifies real command execution and model results."
   ],
   "next_steps": [
-    "F4: End-to-end CI",
     "F5: Site",
     "F6: Cloudflare Pages",
     "F7: Colab bootstrap",
@@ -86,6 +86,6 @@
       "CLOUDFLARE_ACCOUNT_ID"
     ]
   },
-  "last_updated": "2026-11-17T17:00:02.414549+00:00",
-  "last_session_note": "Localhost real WebSocket/tmux end-to-end passes with scripted model and real search helper; Actions localhost and best-effort tunnel jobs added."
+  "last_updated": "2026-11-17T17:09:03.070843+00:00",
+  "last_session_note": "Mobile site and protocol built; local Chromium test passes chat, rendered terminal and takeover. Browser CI job added."
 }

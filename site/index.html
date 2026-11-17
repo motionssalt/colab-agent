@@ -1,0 +1,8 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><title>colab-agent</title>
+<link rel="stylesheet" href="vendor/xterm.css"><link rel="stylesheet" href="style.css">
+<header><h1>colab-agent</h1><div id="status" role="status">Brain offline</div><small id="pong">No pong yet</small></header>
+<section aria-label="Connection"><label for="connection">Notebook connection string</label><input id="connection" type="password" autocomplete="off" placeholder="Paste the private connection string"><button id="connect">Connect</button><button id="forget">Forget connection</button><p>Private access key: do not share it. Stored only in this browser. Pings do not prevent Colab quota or idle disconnections.</p></section>
+<main><section><h2>Chat</h2><div id="chat" role="log" aria-live="polite"></div><label for="task">Task or mid-task message</label><textarea id="task" rows="3" placeholder="Give the agent a task"></textarea><div class="actions"><button id="send">Send</button><button id="new">New task</button><button id="stop">Stop</button><button id="restart">Restart runner</button></div></section>
+<section><h2>Live terminal</h2><button id="takeover">I control the terminal</button><p id="mode">View only — agent controls</p><div id="terminal" aria-label="Live terminal"></div><div class="actions"><button id="ctrlc">Ctrl-C</button><button id="enter">Enter</button><button id="up">↑</button><button id="down">↓</button><button id="tab">Tab</button></div></section></main>
+<script src="vendor/xterm.js"></script><script src="vendor/addon-fit.js"></script><script src="app.js"></script></html>
