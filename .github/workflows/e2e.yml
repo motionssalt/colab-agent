@@ -1,0 +1,33 @@
+name: End-to-end
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  e2e-localhost:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: sudo apt-get update -qq && sudo apt-get install -y tmux
+      - run: pip install -q -r requirements-dev.txt
+      - run: python tests/e2e_check.py
+  e2e-tunnel:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: sudo apt-get update -qq && sudo apt-get install -y tmux
+      - run: pip install -q -r requirements-dev.txt
+      - name: Install cloudflared
+        run: |
+          curl -fsSL https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -o /tmp/cloudflared
+          chmod +x /tmp/cloudflared
+          sudo mv /tmp/cloudflared /usr/local/bin/
+      - run: python tests/e2e_check.py --tunnel

@@ -3,7 +3,7 @@
   "repo": "motionssalt/colab-agent",
   "goal": "A free Colab Ollama brain driving a live GitHub Actions tmux terminal from a mobile static control panel.",
   "status": "in_progress",
-  "current_phase": "F3",
+  "current_phase": "F4",
   "phases": [],
   "queue": [
     {
@@ -21,14 +21,14 @@
     {
       "id": "F3",
       "title": "Brain",
-      "status": "in_progress",
-      "notes": "Brain implemented with authenticated sockets, strict native/JSON tools, repair, context budget, inbox, stop, loop guards and state snapshots; 11 local tests pass."
+      "status": "done",
+      "notes": "GitHub Actions CI 44131953926 passed 11 tests covering fake-model tasks, repair, repeat guards, inbox, cancellation, bounded context, snapshots and authentication."
     },
     {
       "id": "F4",
       "title": "End-to-end CI",
-      "status": "pending",
-      "notes": ""
+      "status": "in_progress",
+      "notes": "Localhost real WebSocket/tmux end-to-end passes with scripted model and real search helper; Actions localhost and best-effort tunnel jobs added."
     },
     {
       "id": "F5",
@@ -57,10 +57,10 @@
   ],
   "completed": [
     "F1: Scaffold pushed; GitHub Actions CI 44131280926 passed; archived prompt redacted.",
-    "F2: GitHub Actions CI 44131603213 green. Local real search and fetch succeeded; tmux completion, timeout, cancellation and reconnect tests passed."
+    "F2: GitHub Actions CI 44131603213 green. Local real search and fetch succeeded; tmux completion, timeout, cancellation and reconnect tests passed.",
+    "F3: GitHub Actions CI 44131953926 passed 11 tests covering fake-model tasks, repair, repeat guards, inbox, cancellation, bounded context, snapshots and authentication."
   ],
   "next_steps": [
-    "F3: Brain",
     "F4: End-to-end CI",
     "F5: Site",
     "F6: Cloudflare Pages",
@@ -86,6 +86,6 @@
       "CLOUDFLARE_ACCOUNT_ID"
     ]
   },
-  "last_updated": "2026-11-17T16:59:17.734845+00:00",
-  "last_session_note": "Brain implemented with authenticated sockets, strict native/JSON tools, repair, context budget, inbox, stop, loop guards and state snapshots; 11 local tests pass."
+  "last_updated": "2026-11-17T17:00:02.414549+00:00",
+  "last_session_note": "Localhost real WebSocket/tmux end-to-end passes with scripted model and real search helper; Actions localhost and best-effort tunnel jobs added."
 }
