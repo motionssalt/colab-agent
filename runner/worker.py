@@ -141,6 +141,9 @@ class Worker:
 
 def main():
     # Credentials read from environment only. No stdout, exception URLs or auth headers.
-    try:asyncio.run(Worker(os.environ['AGENT_TUNNEL_URL'],os.environ['AGENT_RUNNER_TOKEN'],os.environ.get('AGENT_WORKDIR',os.path.expanduser('~/work')),float(os.getenv('AGENT_OFFLINE_LIMIT','600'))).serve())
+    async def start():
+        worker=Worker(os.environ['AGENT_TUNNEL_URL'],os.environ['AGENT_RUNNER_TOKEN'],os.environ.get('AGENT_WORKDIR',os.path.expanduser('~/work')),float(os.getenv('AGENT_OFFLINE_LIMIT','600')))
+        await worker.serve()
+    try:asyncio.run(start())
     except (Exception,KeyboardInterrupt):raise SystemExit(1)
 if __name__=='__main__':main()
