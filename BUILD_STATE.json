@@ -3,7 +3,7 @@
   "repo": "motionssalt/colab-agent",
   "goal": "A free Colab Ollama brain driving a live GitHub Actions tmux terminal from a mobile static control panel.",
   "status": "in_progress",
-  "current_phase": "F5",
+  "current_phase": "F6",
   "phases": [],
   "queue": [
     {
@@ -33,14 +33,14 @@
     {
       "id": "F5",
       "title": "Site",
-      "status": "in_progress",
-      "notes": "Mobile site and protocol built; local Chromium test passes chat, rendered terminal and takeover. Browser CI job added."
+      "status": "done",
+      "notes": "GitHub Actions 44133770573 passed mobile Chromium browser, localhost and real tunnel jobs; vendored xterm requires no CDN or build step."
     },
     {
       "id": "F6",
       "title": "Cloudflare Pages",
-      "status": "pending",
-      "notes": ""
+      "status": "in_progress",
+      "notes": "Account-scoped Cloudflare token accepted; Pages project created; both deploy secrets encrypted in Actions. Deployment workflow added."
     },
     {
       "id": "F7",
@@ -59,10 +59,10 @@
     "F1: Scaffold pushed; GitHub Actions CI 44131280926 passed; archived prompt redacted.",
     "F2: GitHub Actions CI 44131603213 green. Local real search and fetch succeeded; tmux completion, timeout, cancellation and reconnect tests passed.",
     "F3: GitHub Actions CI 44131953926 passed 11 tests covering fake-model tasks, repair, repeat guards, inbox, cancellation, bounded context, snapshots and authentication.",
-    "F4: GitHub Actions 44133493687 passed localhost AND real cloudflared tunnel E2E. Fixed CI startup Ctrl-C race; verifies real command execution and model results."
+    "F4: GitHub Actions 44133493687 passed localhost AND real cloudflared tunnel E2E. Fixed CI startup Ctrl-C race; verifies real command execution and model results.",
+    "F5: GitHub Actions 44133770573 passed mobile Chromium browser, localhost and real tunnel jobs; vendored xterm requires no CDN or build step."
   ],
   "next_steps": [
-    "F5: Site",
     "F6: Cloudflare Pages",
     "F7: Colab bootstrap",
     "F8: Hardening and docs"
@@ -70,14 +70,16 @@
   "decisions": [
     "No host front-end: this host does not require one.",
     "Redact credentials from the archived build prompt.",
-    "Builder token is fine-grained; use verified endpoint permissions rather than assuming classic scopes."
+    "Builder token is fine-grained; use verified endpoint permissions rather than assuming classic scopes.",
+    "Cloudflare credential is account-scoped: verify via /accounts/{id}/tokens/verify; user-token endpoint is not applicable. Both account token and Pages API accepted it."
   ],
   "known_issues": [
-    "Cloudflare token verification returned HTTP 401 Invalid API Token.",
     "Real Google Colab/T4 testing unavailable from this environment."
   ],
   "deployment": {
-    "urls": [],
+    "urls": [
+      "https://colab-agent.pages.dev"
+    ],
     "release_tag": "",
     "secrets_expected": [
       "AGENT_TUNNEL_URL",
@@ -86,6 +88,6 @@
       "CLOUDFLARE_ACCOUNT_ID"
     ]
   },
-  "last_updated": "2026-11-17T17:09:03.070843+00:00",
-  "last_session_note": "Mobile site and protocol built; local Chromium test passes chat, rendered terminal and takeover. Browser CI job added."
+  "last_updated": "2026-11-17T17:10:38.750971+00:00",
+  "last_session_note": "Account-scoped Cloudflare token accepted; Pages project created; both deploy secrets encrypted in Actions. Deployment workflow added."
 }
