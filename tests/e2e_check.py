@@ -103,7 +103,7 @@ async def run(tunnel=False,browser=False):
                 rendered='\n'.join(''.join(line[x].data for x in sorted(line)) for line in screen.history.top)+'\n'+'\n'.join(screen.display)
                 # Cursor edits can split strings across raw frames; verify rendered screen too.
                 observed=terminal+'\n'+rendered
-                assert 'hello' in observed and ('search python' in observed or 'search python' in ''.join(rendered.splitlines())), repr(observed[-5000:])
+                assert 'hello' in observed and ('search python' in observed or 'search python' in ''.join(rendered.splitlines())), {'raw':repr(terminal[:3000]),'hub_chars':len(hub.scrollback),'worker_chars':len(w.terminal.history),'queue':w.queue.qsize(),'seq':hub.last_seq,'results':llm.results}
                 assert len(llm.results)>=2
                 print(('Tunnel' if tunnel else 'Localhost')+' E2E passed: terminal commands, outputs to model, finish')
     finally:
