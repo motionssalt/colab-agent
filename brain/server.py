@@ -7,7 +7,7 @@ from brain.llm import Ollama
 class Hub:
     def __init__(self,llm=None,control_token=None,runner_token=None,dispatch=None,resume=None):
         self.control_token=control_token or secrets.token_urlsafe(32);self.runner_token=runner_token or secrets.token_urlsafe(32)
-        self.clients={};self.runner=None;self.pending={};self.scrollback='';self.events=deque(maxlen=150)
+        self.clients={};self.runner=None;self.pending={};self.scrollback='';self.events=deque(maxlen=150);self.rpc_lock=asyncio.Lock()
         self.worker_id=None;self.last_seq=0;self.takeover=False;self.dispatch=dispatch;self.rotating=False;self.resume=resume
         self.agent=Agent(llm or Ollama(os.getenv('AGENT_MODEL','qwen3:14b')),self.call,self.broadcast,self.save)
     async def broadcast(self,event):
@@ -19,6 +19,8 @@ class Hub:
         if not self.runner:raise RuntimeError('Runner offline. Wait for it to connect or restart it.')
         await self.runner.send_json(msg)
     async def call(self,tool,args):
+        async with self.rpc_lock:return await self._call(tool,args)
+    async def _call(self,tool,args):
         if self.takeover and tool!='read_screen':return {'error':'Terminal taken over by user'}
         deadline=time.monotonic()+90
         while not self.runner and time.monotonic()<deadline:await asyncio.sleep(.25)
@@ -33,8 +35,10 @@ class Hub:
         if not self.runner or self.takeover:return
         payload=json.dumps(state,ensure_ascii=False)
         for token in (self.control_token,self.runner_token):payload=payload.replace(token,'[REDACTED]')
-        await self.call('write_file',{'path':os.path.expanduser('~/work/state/session.json'),'content':payload})
-        await self.call('run',{'command':"cd ~/work && git add -f -- state/session.json && (git diff --cached --quiet -- state/session.json || git commit -m 'Save conversation state' -- state/session.json) && git push origin workspace",'timeout_s':60})
+        result=await self.call('write_file',{'path':'~/work/state/session.json','content':payload})
+        if result.get('error'):raise RuntimeError('State write failed')
+        result=await self.call('run',{'command':"(cd ~/work && git add -f -- state/session.json && (git diff --cached --quiet -- state/session.json || git commit -m 'Save conversation state' -- state/session.json) && git push origin workspace)",'timeout_s':60})
+        if result.get('error') or result.get('exit_code')!=0:raise RuntimeError('State push failed')
     async def rotate(self):
         if self.rotating or not self.dispatch:return
         self.rotating=True

@@ -3,7 +3,7 @@
   "repo": "motionssalt/colab-agent",
   "goal": "A free Colab Ollama brain driving a live GitHub Actions tmux terminal from a mobile static control panel.",
   "status": "in_progress",
-  "current_phase": "F6",
+  "current_phase": "F7",
   "phases": [],
   "queue": [
     {
@@ -39,14 +39,14 @@
     {
       "id": "F6",
       "title": "Cloudflare Pages",
-      "status": "in_progress",
-      "notes": "Account-scoped Cloudflare token accepted; Pages project created; both deploy secrets encrypted in Actions. Deployment workflow added."
+      "status": "done",
+      "notes": "Pages deployment 44134069348 green; https://colab-agent.pages.dev returns HTTP 200. Deploy credentials isolated to deploy-site.yml."
     },
     {
       "id": "F7",
       "title": "Colab bootstrap",
-      "status": "pending",
-      "notes": ""
+      "status": "in_progress",
+      "notes": "Notebook and importable bootstrap implemented; nbformat validated. Adding mocked API tests and live encrypted-secret dispatch check."
     },
     {
       "id": "F8",
@@ -60,10 +60,10 @@
     "F2: GitHub Actions CI 44131603213 green. Local real search and fetch succeeded; tmux completion, timeout, cancellation and reconnect tests passed.",
     "F3: GitHub Actions CI 44131953926 passed 11 tests covering fake-model tasks, repair, repeat guards, inbox, cancellation, bounded context, snapshots and authentication.",
     "F4: GitHub Actions 44133493687 passed localhost AND real cloudflared tunnel E2E. Fixed CI startup Ctrl-C race; verifies real command execution and model results.",
-    "F5: GitHub Actions 44133770573 passed mobile Chromium browser, localhost and real tunnel jobs; vendored xterm requires no CDN or build step."
+    "F5: GitHub Actions 44133770573 passed mobile Chromium browser, localhost and real tunnel jobs; vendored xterm requires no CDN or build step.",
+    "F6: Pages deployment 44134069348 green; https://colab-agent.pages.dev returns HTTP 200. Deploy credentials isolated to deploy-site.yml."
   ],
   "next_steps": [
-    "F6: Cloudflare Pages",
     "F7: Colab bootstrap",
     "F8: Hardening and docs"
   ],
@@ -88,6 +88,6 @@
       "CLOUDFLARE_ACCOUNT_ID"
     ]
   },
-  "last_updated": "2026-11-17T17:10:38.750971+00:00",
-  "last_session_note": "Account-scoped Cloudflare token accepted; Pages project created; both deploy secrets encrypted in Actions. Deployment workflow added."
+  "last_updated": "2026-11-17T17:13:38.640324+00:00",
+  "last_session_note": "Notebook and importable bootstrap implemented; nbformat validated. Adding mocked API tests and live encrypted-secret dispatch check."
 }
