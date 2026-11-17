@@ -3,7 +3,7 @@
   "repo": "motionssalt/colab-agent",
   "goal": "A free Colab Ollama brain driving a live GitHub Actions tmux terminal from a mobile static control panel.",
   "status": "in_progress",
-  "current_phase": "F2",
+  "current_phase": "F3",
   "phases": [],
   "queue": [
     {
@@ -15,14 +15,14 @@
     {
       "id": "F2",
       "title": "Runner",
-      "status": "in_progress",
-      "notes": "Worker implemented; four local PTY/tmux tests pass including reconnect and timeout recovery; extending CI."
+      "status": "done",
+      "notes": "GitHub Actions CI 44131603213 green. Local real search and fetch succeeded; tmux completion, timeout, cancellation and reconnect tests passed."
     },
     {
       "id": "F3",
       "title": "Brain",
-      "status": "pending",
-      "notes": ""
+      "status": "in_progress",
+      "notes": "Brain implemented with authenticated sockets, strict native/JSON tools, repair, context budget, inbox, stop, loop guards and state snapshots; 11 local tests pass."
     },
     {
       "id": "F4",
@@ -56,10 +56,10 @@
     }
   ],
   "completed": [
-    "F1: Scaffold pushed; GitHub Actions CI 44131280926 passed; archived prompt redacted."
+    "F1: Scaffold pushed; GitHub Actions CI 44131280926 passed; archived prompt redacted.",
+    "F2: GitHub Actions CI 44131603213 green. Local real search and fetch succeeded; tmux completion, timeout, cancellation and reconnect tests passed."
   ],
   "next_steps": [
-    "F2: Runner",
     "F3: Brain",
     "F4: End-to-end CI",
     "F5: Site",
@@ -86,6 +86,6 @@
       "CLOUDFLARE_ACCOUNT_ID"
     ]
   },
-  "last_updated": "2026-11-17T16:56:54.827838+00:00",
-  "last_session_note": "Worker implemented; four local PTY/tmux tests pass including reconnect and timeout recovery; extending CI."
+  "last_updated": "2026-11-17T16:59:17.734845+00:00",
+  "last_session_note": "Brain implemented with authenticated sockets, strict native/JSON tools, repair, context budget, inbox, stop, loop guards and state snapshots; 11 local tests pass."
 }
