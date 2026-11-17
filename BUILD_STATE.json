@@ -3,8 +3,57 @@
   "repo": "motionssalt/colab-agent",
   "goal": "A free Colab Ollama brain driving a live GitHub Actions tmux terminal from a mobile static control panel.",
   "status": "in_progress",
-  "current_phase": "F7",
-  "phases": [],
+  "current_phase": "F8",
+  "phases": [
+    {
+      "id": "F1",
+      "name": "Scaffold",
+      "status": "done",
+      "notes": "Scaffold pushed; GitHub Actions CI 44131280926 passed; archived prompt redacted."
+    },
+    {
+      "id": "F2",
+      "name": "Runner",
+      "status": "done",
+      "notes": "GitHub Actions CI 44131603213 green. Local real search and fetch succeeded; tmux completion, timeout, cancellation and reconnect tests passed."
+    },
+    {
+      "id": "F3",
+      "name": "Brain",
+      "status": "done",
+      "notes": "GitHub Actions CI 44131953926 passed 11 tests covering fake-model tasks, repair, repeat guards, inbox, cancellation, bounded context, snapshots and authentication."
+    },
+    {
+      "id": "F4",
+      "name": "End-to-end CI",
+      "status": "done",
+      "notes": "GitHub Actions 44133493687 passed localhost AND real cloudflared tunnel E2E. Fixed CI startup Ctrl-C race; verifies real command execution and model results."
+    },
+    {
+      "id": "F5",
+      "name": "Site",
+      "status": "done",
+      "notes": "GitHub Actions 44133770573 passed mobile Chromium browser, localhost and real tunnel jobs; vendored xterm requires no CDN or build step."
+    },
+    {
+      "id": "F6",
+      "name": "Cloudflare Pages",
+      "status": "done",
+      "notes": "Pages deployment 44134069348 green; https://colab-agent.pages.dev returns HTTP 200. Deploy credentials isolated to deploy-site.yml."
+    },
+    {
+      "id": "F7",
+      "name": "Colab bootstrap",
+      "status": "in_progress",
+      "notes": "Notebook and importable bootstrap implemented; nbformat validated. Adding mocked API tests and live encrypted-secret dispatch check."
+    },
+    {
+      "id": "F8",
+      "name": "Hardening and docs",
+      "status": "pending",
+      "notes": ""
+    }
+  ],
   "queue": [
     {
       "id": "F1",
@@ -45,14 +94,14 @@
     {
       "id": "F7",
       "title": "Colab bootstrap",
-      "status": "in_progress",
-      "notes": "Notebook and importable bootstrap implemented; nbformat validated. Adding mocked API tests and live encrypted-secret dispatch check."
+      "status": "done",
+      "notes": "16 tests passed in Actions 44134773312; generated notebook validates. Live dispatch 44135450081 succeeded with sealed session secrets, graceful dummy-tunnel exit, and logs checked free of all supplied/session secrets."
     },
     {
       "id": "F8",
       "title": "Hardening and docs",
-      "status": "pending",
-      "notes": ""
+      "status": "in_progress",
+      "notes": "Hardening passes 19 local tests, real runner-replacement persistence, localhost E2E and mobile browser. Phone-first docs written; awaiting final Actions and redeploy."
     }
   ],
   "completed": [
@@ -61,17 +110,23 @@
     "F3: GitHub Actions CI 44131953926 passed 11 tests covering fake-model tasks, repair, repeat guards, inbox, cancellation, bounded context, snapshots and authentication.",
     "F4: GitHub Actions 44133493687 passed localhost AND real cloudflared tunnel E2E. Fixed CI startup Ctrl-C race; verifies real command execution and model results.",
     "F5: GitHub Actions 44133770573 passed mobile Chromium browser, localhost and real tunnel jobs; vendored xterm requires no CDN or build step.",
-    "F6: Pages deployment 44134069348 green; https://colab-agent.pages.dev returns HTTP 200. Deploy credentials isolated to deploy-site.yml."
+    "F6: Pages deployment 44134069348 green; https://colab-agent.pages.dev returns HTTP 200. Deploy credentials isolated to deploy-site.yml.",
+    "F7: 16 tests passed in Actions 44134773312; generated notebook validates. Live dispatch 44135450081 succeeded with sealed session secrets, graceful dummy-tunnel exit, and logs checked free of all supplied/session secrets."
   ],
   "next_steps": [
-    "F7: Colab bootstrap",
     "F8: Hardening and docs"
   ],
   "decisions": [
     "No host front-end: this host does not require one.",
     "Redact credentials from the archived build prompt.",
     "Builder token is fine-grained; use verified endpoint permissions rather than assuming classic scopes.",
-    "Cloudflare credential is account-scoped: verify via /accounts/{id}/tokens/verify; user-token endpoint is not applicable. Both account token and Pages API accepted it."
+    "Cloudflare credential is account-scoped: verify via /accounts/{id}/tokens/verify; user-token endpoint is not applicable. Both account token and Pages API accepted it.",
+    "tmux pipe-pane supplies raw PTY output independently of viewers.",
+    "Actions runner HOME is isolated under runner.temp to preserve the required ~/work path.",
+    "Default: qwen3:14b; context 16384; thinking off; max 60 steps; bounded extractive summaries.",
+    "Runtime PATs must be classic repo+workflow; builder fine-grained permissions were verified against actual APIs.",
+    "Git Data API performs conflict-checked, non-force template updates; workspace is never touched.",
+    "Release is a prerelease pending the first real Colab/T4 confirmation."
   ],
   "known_issues": [
     "Real Google Colab/T4 testing unavailable from this environment."
@@ -80,7 +135,7 @@
     "urls": [
       "https://colab-agent.pages.dev"
     ],
-    "release_tag": "",
+    "release_tag": "v1.0.0-rc.1",
     "secrets_expected": [
       "AGENT_TUNNEL_URL",
       "AGENT_RUNNER_TOKEN",
@@ -88,6 +143,6 @@
       "CLOUDFLARE_ACCOUNT_ID"
     ]
   },
-  "last_updated": "2026-11-17T17:13:38.640324+00:00",
-  "last_session_note": "Notebook and importable bootstrap implemented; nbformat validated. Adding mocked API tests and live encrypted-secret dispatch check."
+  "last_updated": "2026-11-17T17:22:05.891545+00:00",
+  "last_session_note": "Hardening passes 19 local tests, real runner-replacement persistence, localhost E2E and mobile browser. Phone-first docs written; awaiting final Actions and redeploy."
 }

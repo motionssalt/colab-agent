@@ -50,3 +50,23 @@ async def test_worker_reconnect(tmp_path):
         task=asyncio.create_task(w.serve())
         try:await asyncio.wait_for(done.wait(),10);assert len(connections)>=2
         finally:task.cancel();await asyncio.gather(task,return_exceptions=True)
+
+
+def test_cli_unreachable_brain_exits_silently(tmp_path):
+    import os,subprocess,sys
+    env=os.environ.copy();env.update(AGENT_TUNNEL_URL='http://127.0.0.1:1',AGENT_RUNNER_TOKEN='test-only',AGENT_WORKDIR=str(tmp_path),AGENT_OFFLINE_LIMIT='0.2')
+    p=subprocess.run([sys.executable,'-m','runner.worker'],env=env,capture_output=True,timeout=15)
+    assert p.returncode==0 and p.stdout==b'' and p.stderr==b''
+
+async def test_real_output_head_tail_and_secret_environment(tmp_path,monkeypatch):
+    monkeypatch.setenv('AGENT_RUNNER_TOKEN','must-not-reach-shell')
+    monkeypatch.setenv('CLOUDFLARE_API_TOKEN','must-not-reach-shell-either')
+    t=Terminal(tmp_path)
+    try:
+        await asyncio.sleep(.2)
+        result=await t.run("python -c \"print('HEAD');print('x'*50000);print('TAIL')\"",10)
+        assert result['exit_code']==0 and len(result['output'])<=12000
+        assert 'HEAD' in result['output'] and 'TAIL' in result['output']
+        result=await t.run('env | grep -E "AGENT_RUNNER_TOKEN|CLOUDFLARE_API_TOKEN"',3)
+        assert result['exit_code']==1
+    finally:t.close()

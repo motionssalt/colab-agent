@@ -4,7 +4,8 @@ class Ollama:
     def __init__(self,model='qwen3:14b',url='http://127.0.0.1:11434',num_ctx=16384,thinking=False):
         self.model=model;self.url=url;self.num_ctx=num_ctx;self.thinking=thinking;self.native=True
     async def chat(self,messages):
-        payload={'model':self.model,'messages':messages,'stream':False,'think':self.thinking,'keep_alive':-1,'options':{'num_ctx':self.num_ctx,'temperature':.2,'num_predict':2048}}
+        payload={'model':self.model,'messages':messages,'stream':False,'keep_alive':-1,'options':{'num_ctx':self.num_ctx,'temperature':.2,'num_predict':2048}}
+        if 'qwen3' in self.model or self.thinking:payload['think']=self.thinking
         if self.native:payload['tools']=TOOLS
         else:payload['format']='json'
         async with httpx.AsyncClient(timeout=240) as c:

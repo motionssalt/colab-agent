@@ -11,7 +11,7 @@ class Terminal:
     def __init__(self,cwd,on_output=lambda s:None):
         self.cwd=pathlib.Path(cwd).resolve();self.cwd.mkdir(parents=True,exist_ok=True)
         self.name='agent-'+uuid.uuid4().hex[:12];self.on_output=on_output
-        self.history='';self.lock=asyncio.Lock();self.decoder=codecs.getincrementaldecoder('utf8')('replace')
+        self.history='';self.capture=None;self.lock=asyncio.Lock();self.decoder=codecs.getincrementaldecoder('utf8')('replace')
         env={k:v for k,v in os.environ.items() if not k.startswith(('AGENT_','CLOUDFLARE_')) and k not in ('GITHUB_PAT','GITHUB_TOKEN')};env['TERM']='xterm-256color';env['PS1']='agent$ '
         subprocess.run(['tmux','-L',self.name,'new-session','-d','-s','agent','-x','100','-y','30','-c',str(self.cwd),'bash --noprofile --norc'],check=True,env=env,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
         # Stream the pane PTY directly; detached tmux attach clients may suppress
@@ -25,6 +25,7 @@ class Terminal:
         except (BlockingIOError,OSError):return
         if data:
             text=self.decoder.decode(data);self.history=(self.history+text)[-200000:];self.on_output(text)
+            if self.capture is not None:self.capture=bounded(self.capture+text,32000)
     def tmux(self,*args):
         return subprocess.run(['tmux','-L',self.name,*args],capture_output=True,check=True).stdout
     def send_keys(self,keys):
@@ -33,13 +34,14 @@ class Terminal:
         # tmux literal key delivery avoids a partial nonblocking PTY write.
         if keys=='CTRL_C':self.tmux('send-keys','-t','agent','C-c')
         else:
-            for i in range(0,len(data),2048):self.tmux('send-keys','-t','agent','-l','--',data[i:i+2048].decode('utf8','replace'))
+            text=data.decode('utf8')
+            for i in range(0,len(text),1024):self.tmux('send-keys','-t','agent','-l','--',text[i:i+1024])
     def interrupt(self):self.tmux('send-keys','-t','agent','C-c')
     def read_screen(self):return self.tmux('capture-pane','-p','-t','agent','-S','-200').decode('utf8','replace')[-24000:]
     async def run(self,command,timeout_s=120):
         import shlex
         async with self.lock:
-            marker=pathlib.Path('/tmp')/('agent-result-'+secrets.token_hex(16));start=len(self.history)
+            marker=pathlib.Path('/tmp')/('agent-result-'+secrets.token_hex(16));self.capture='' 
             # eval runs in the persistent interactive shell: cd/export persist between calls.
             text='eval '+shlex.quote(command)+'; __agent_ec=$?; printf "%s" "$__agent_ec" > '+str(marker)
             self.send_keys(text+'\r');deadline=time.monotonic()+timeout_s;timed_out=False
@@ -51,11 +53,12 @@ class Terminal:
                 await asyncio.sleep(.1)
                 code=124 if timed_out else int(marker.read_text())
                 # capture-pane is stable even when the raw ANSI history rolls over.
-                output=self.read_screen()
+                import re
+                output=re.sub(r'\x1b\[[0-?]*[ -/]*[@-~]','',self.capture or self.read_screen())
                 return {'exit_code':code,'timed_out':timed_out,'output':bounded(output)}
             except asyncio.CancelledError:
                 self.interrupt();raise
-            finally:marker.unlink(missing_ok=True)
+            finally:self.capture=None;marker.unlink(missing_ok=True)
     async def write_file(self,path,content):
         import shlex
         # Relative paths resolve against the shell's actual current directory.
@@ -102,6 +105,7 @@ class Worker:
     async def heartbeat(self,ws):
         while True:
             left=self.lifetime-(time.monotonic()-self.started)
+            if left<=0:await ws.close();return
             await ws.send(json.dumps({'type':'worker_status','remaining_s':int(left)}))
             await asyncio.sleep(15)
     async def serve(self):

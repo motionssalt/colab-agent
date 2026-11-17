@@ -41,17 +41,23 @@ class Hub:
         if result.get('error') or result.get('exit_code')!=0:raise RuntimeError('State push failed')
     async def rotate(self):
         if self.rotating or not self.dispatch:return
-        self.rotating=True
+        self.rotating=True;old=self.runner;self.agent.enabled.clear()
         try:
-            self.agent.inbox.append('Runner expires soon. Commit and push all work now; runner replacement is imminent.')
-            await self.broadcast({'type':'event','text':'Runner has under ten minutes left. Saving before replacement.'})
-            # Wait for current command/model step to quiesce, then pause dispatch of further steps.
-            await self.agent.persist()
-            await self.call('run',{'command':"cd ~/work && git add -A && (git diff --cached --quiet || git commit -m 'Checkpoint before runner rotation') && git push origin workspace",'timeout_s':120})
-            self.agent.enabled.clear()
+            self.agent.inbox.append('Runner replacement: inspect saved workspace and resume the task.')
+            await self.broadcast({'type':'event','text':'Checkpointing work and starting a replacement runner.'})
+            if old:
+                await self.agent.persist()
+                result=await self.call('run',{'command':"(cd ~/work && git add -A && (git diff --cached --quiet || git commit -m 'Checkpoint before runner rotation') && git push origin workspace)",'timeout_s':120})
+                if result.get('error') or result.get('exit_code')!=0:raise RuntimeError('Checkpoint failed')
             await self.dispatch()
+            for _ in range(480):
+                if self.runner and self.runner is not old:
+                    if not self.takeover:self.agent.enabled.set()
+                    return
+                await asyncio.sleep(.25)
+            raise RuntimeError('Replacement did not connect')
         except Exception:
-            self.agent.enabled.set();await self.broadcast({'type':'error','text':'Runner rotation failed. Save work and use Restart runner.'})
+            self.agent.enabled.set();await self.broadcast({'type':'error','text':'Runner rotation failed. Check Actions; work was not discarded.'})
         finally:self.rotating=False
 
 def create_app(hub=None):
